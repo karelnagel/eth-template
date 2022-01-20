@@ -4,10 +4,10 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import Web3Modal from "web3modal";
 
 
-const INFURA_ID = "ced2c2c4697546c7bb0669c5f0a66cf6";
-const NETWORK = "mainnet";
+const INFURA_ID = process.env.REACT_APP_INFURA_ID;
+const NETWORK = process.env.REACT_APP_NETWORK;
 
-function useWeb3Modal(config: {autoLoad?: boolean;infuraId?: string;network?: string;} = {}) : [provider:Web3Provider | undefined,loadWeb3Modal:()=>Promise<void>,logoutOfWeb3Modal:()=>Promise<void>]{
+function useWeb3Modal(config: { autoLoad?: boolean; infuraId?: string; network?: string; } = {}): [provider: Web3Provider | undefined, loadWeb3Modal: () => Promise<void>, logoutOfWeb3Modal: () => Promise<void>] {
   const [provider, setProvider] = useState<Web3Provider | undefined>();
   const [autoLoaded, setAutoLoaded] = useState(false);
   const { autoLoad = true, infuraId = INFURA_ID, network = NETWORK } = config;
@@ -31,10 +31,11 @@ function useWeb3Modal(config: {autoLoad?: boolean;infuraId?: string;network?: st
   const loadWeb3Modal = useCallback(async () => {
     const newProvider = await web3Modal.connect();
     setProvider(new Web3Provider(newProvider));
+
   }, [web3Modal]);
 
   const logoutOfWeb3Modal = useCallback(
-    async function() {
+    async function () {
       web3Modal.clearCachedProvider();
       window.location.reload();
     },
@@ -54,7 +55,6 @@ function useWeb3Modal(config: {autoLoad?: boolean;infuraId?: string;network?: st
     setAutoLoaded,
     web3Modal.cachedProvider
   ]);
-
   return [provider, loadWeb3Modal, logoutOfWeb3Modal];
 }
 
